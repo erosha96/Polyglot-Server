@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTokenTable extends Migration
+class CreateUserWordTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,16 @@ class CreateUsersTokenTable extends Migration
      */
     public function up()
     {
-        Schema::create('users_token', function (Blueprint $table) {
+        Schema::create('user_word', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('word_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('token');
-            $table->boolean('active');
-            $table->timestamps();
+            $table->integer('learned_times')->default(0);
+            $table->unsignedInteger('last_time_learned');
+            $table->foreign('word_id')->references('id')->on('words');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unique('word_id', 'user_id');
+            $table->timestamps();
         });
     }
 
@@ -31,7 +34,7 @@ class CreateUsersTokenTable extends Migration
     public function down()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-        Schema::dropIfExists('users_token');
+        Schema::dropIfExists('user_word');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

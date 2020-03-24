@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'phone', 'email', 'password',
+        'login', 'email', 'password',
     ];
 
     /**
@@ -27,6 +27,16 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function allCourses()
+    {
+        return $this->belongsToMany('App\Course', 'users_courses');
+    }
+
+    public function learnedWords()
+    {
+        return $this->belongsToMany('App\Word');
+    }
 
     /**
      * The attributes that should be cast to native types.

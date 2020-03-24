@@ -11,4 +11,8 @@ class UsersToken extends Model
     protected $fillable = [
         'token', 'user_id', 'active',
     ];
+
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
 }

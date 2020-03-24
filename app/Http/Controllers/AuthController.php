@@ -11,34 +11,43 @@ class AuthController extends Controller
 {
     public function register (Request $request) {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|unique:users,phone',
+            'login' => 'required|unique:users,login',
             'email' => 'required|email|unique:users,email',
             'password' => 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['inputError'=>$validator->errors()], 401);
         }
-        $user = User::create([
+        $user = User::insert([
             'name' => 'Student',
-            'phone' => $request->phone,
+            'login' => $request->login,
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
+        if ($user) {
+            return response()->json([
+                'message' => 'Successfully created user!'
+            ], 201);
+        } else {
+            return response()->json([
+                'error' => 'Error creating'
+            ], 500);
+        }
     }
     public function login (Request $request) {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required',
+            'login' => 'required',
             'password' => 'required'
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['inputError'=>$validator->errors()], 401);
         }
         function loginError () {
             return response()->json([
                 'message' => 'Invalid Login And Password',
-            ]);
+            ], 401);
         }
-        $user = User::where('phone', $request->phone)->first();
+        $user = User::where('login', $request->login)->first();
         if ($user && password_verify($request->password, $user->password)) {
             $tokenStr = '';
             do {
